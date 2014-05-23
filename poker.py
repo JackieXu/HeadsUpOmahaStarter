@@ -64,17 +64,27 @@ class Ranker(object):
     '''
     @staticmethod
     def rank_five_cards(cards):
+
         # List of all card values
         values = sorted(['23456789TJQKA'.find(card.value) for card in cards])
 
         # Checks if hand is a straight
-        is_straight = False not in [values[i] == values[0] + i for i in range(5)]
+        is_straight = all([values[i] == values[0] + i for i in range(5)])
+
+        # Additional straight check
+        if not is straight:
+
+            # Weakest straight
+            is_straight = all(values[i] == values[0] + i for i in range(4)) and values[4] == 12
+
+            # Rotate values as the ace is weakest in this case
+            values = values[1:] + values[:1]
 
         # Checks if hand is a flush
-        is_flush = False not in [card.suit == cards[0].suit for card in cards]
+        is_flush = all([card.suit == cards[0].suit for card in cards])
 
         # Get card value counts
-        value_count = {'value': values.count(value) for value in values}
+        value_count = {value: values.count(value) for value in values}
 
         # Sort value counts by most occuring
         sorted_value_count = sorted([(count, value) for value, count in value_count.items()], reverse = True)
@@ -82,12 +92,12 @@ class Ranker(object):
         # Get all kinds (e.g. four of a kind, three of a kind, pair)
         kinds = [value_count[0] for value_count in sorted_value_count]
 
-        # Get values for kidns
+        # Get values for kinds
         kind_values = [value_count[1] for value_count in sorted_value_count]
 
         # Royal flush
         if is_straight and is_flush and values[0] == 8:
-            return ['9'] + values
+            return ['9'] + values        
         # Straight flush
         if is_straight and is_flush:
             return ['8'] + kind_values
