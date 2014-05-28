@@ -72,7 +72,7 @@ class Ranker(object):
         is_straight = all([values[i] == values[0] + i for i in range(5)])
 
         # Additional straight check
-        if not is straight:
+        if not straight:
 
             # Weakest straight
             is_straight = all(values[i] == values[0] + i for i in range(4)) and values[4] == 12
